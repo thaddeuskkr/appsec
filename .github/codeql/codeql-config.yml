@@ -1,0 +1,5 @@
+name: "BookwormsOnline CodeQL Config"
+
+# Ignore vendored third-party frontend libraries so alerts focus on project-owned code.
+paths-ignore:
+  - wwwroot/lib
