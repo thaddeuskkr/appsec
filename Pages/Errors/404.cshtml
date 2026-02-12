@@ -1,0 +1,16 @@
+@page
+@{
+    ViewData["Title"] = "404 - Not Found";
+}
+
+<section class="error-shell">
+    <div class="error-card">
+        <div class="error-code">404</div>
+        <h1>Page not found</h1>
+        <p>The page may have moved, expired, or never existed at this address.</p>
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Go home</a>
+            <a asp-page="/Account/Login" class="btn btn-outline-primary">Go to login</a>
+        </div>
+    </div>
+</section>

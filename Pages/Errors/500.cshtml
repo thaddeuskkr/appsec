@@ -1,0 +1,16 @@
+@page
+@{
+    ViewData["Title"] = "500 - Server Error";
+}
+
+<section class="error-shell">
+    <div class="error-card">
+        <div class="error-code">500</div>
+        <h1>Unexpected error</h1>
+        <p>An unexpected error occurred while processing your request. Please retry in a moment.</p>
+        <div class="error-actions">
+            <a asp-page="/Index" class="btn btn-primary">Go home</a>
+            <a asp-page="/Account/Login" class="btn btn-outline-primary">Login</a>
+        </div>
+    </div>
+</section>

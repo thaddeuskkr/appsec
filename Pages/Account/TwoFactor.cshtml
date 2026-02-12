@@ -1,0 +1,31 @@
+@page
+@model BookwormsOnline.Pages.Account.TwoFactorModel
+@{
+    ViewData["Title"] = "Two-factor authentication";
+}
+
+<section class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <p class="eyebrow">Security Settings</p>
+            <h1>Two-factor authentication</h1>
+            <p>Choose whether your account requires an email verification code during sign in.</p>
+        </div>
+
+        <form method="post" data-enhanced-form>
+            <div asp-validation-summary="All" class="alert alert-danger alert-modern validation-summary mb-3" role="alert"></div>
+
+            <div class="form-check mb-3">
+                <input asp-for="Input.EnableTwoFactor" class="form-check-input" />
+                <label asp-for="Input.EnableTwoFactor" class="form-check-label"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary" data-loading-text="Saving...">Save</button>
+            <a asp-page="/Index" class="btn btn-outline-primary ms-2">Back to home</a>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

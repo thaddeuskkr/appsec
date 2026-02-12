@@ -1,0 +1,33 @@
+@{
+    var statusMessage = TempData["StatusMessage"] as string;
+    var errorMessage = TempData["ErrorMessage"] as string;
+    var requestPath = Context?.Request?.Path.Value ?? string.Empty;
+    var isAccountPage = requestPath.StartsWith("/Account", StringComparison.OrdinalIgnoreCase);
+    var isRegisterPage = requestPath.Equals("/Account/Register", StringComparison.OrdinalIgnoreCase);
+    var shellClass = isRegisterPage
+        ? "status-message-shell status-message-shell--auth-wide"
+        : isAccountPage
+            ? "status-message-shell status-message-shell--auth"
+            : "status-message-shell";
+}
+
+@if (!string.IsNullOrWhiteSpace(statusMessage) || !string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="@shellClass">
+        @if (!string.IsNullOrWhiteSpace(statusMessage))
+        {
+            <div class="alert alert-success alert-modern" role="status">
+                <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>
+                @statusMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="alert alert-danger alert-modern" role="alert">
+                <i class="bi bi-exclamation-octagon-fill me-2" aria-hidden="true"></i>
+                @errorMessage
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,60 @@
+@page
+@model BookwormsOnline.Pages.IndexModel
+@{
+    ViewData["Title"] = "Member Home";
+}
+
+<section class="home-shell">
+    <div class="hero-panel">
+        <p class="eyebrow text-white-50">Member Dashboard</p>
+        <h1 class="mb-2">Welcome to Bookworms Online</h1>
+        <p>Your secure profile information below is decrypted on read and protected at rest in the database.</p>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <div class="alert alert-warning alert-modern">@Model.StatusMessage</div>
+    }
+
+    <div class="profile-grid">
+        <article class="profile-card">
+            <h2 class="h4 mb-3">Profile details</h2>
+            <dl class="profile-details">
+                <dt>Name</dt>
+                <dd>@Model.FullName</dd>
+
+                <dt>Email</dt>
+                <dd>@Model.Email</dd>
+
+                <dt>Mobile</dt>
+                <dd>@Model.MobileNumber</dd>
+
+                <dt>Billing Address</dt>
+                <dd>@Model.BillingAddress</dd>
+
+                <dt>Shipping Address</dt>
+                <dd>@Model.ShippingAddress</dd>
+
+                <dt>Credit Card</dt>
+                <dd>@Model.MaskedCreditCard</dd>
+            </dl>
+
+            <div class="mt-4">
+                <a asp-page="/Account/ChangePassword" class="btn btn-outline-primary">Change password</a>
+                <a asp-page="/Account/TwoFactor" class="btn btn-outline-primary ms-2">Two-factor settings</a>
+            </div>
+        </article>
+
+        <article class="profile-card photo-panel">
+            <h2 class="h4 mb-3">Profile photo</h2>
+            @if (Model.HasProfilePhoto && !string.IsNullOrWhiteSpace(Model.CurrentUserId))
+            {
+                <img src="@Url.Page("/Profile/Photo", new { userId = Model.CurrentUserId })" alt="Profile photo" />
+            }
+            else
+            {
+                <div class="photo-placeholder">No profile photo uploaded.</div>
+            }
+        </article>
+    </div>
+</section>

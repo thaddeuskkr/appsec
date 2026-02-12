@@ -1,0 +1,38 @@
+@page
+@model BookwormsOnline.Pages.Account.ResendConfirmationModel
+@{
+    ViewData["Title"] = "Resend confirmation email";
+}
+
+<section class="auth-shell">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <p class="eyebrow">Email Verification</p>
+            <h1>Resend confirmation email</h1>
+            <p>Enter your account email to receive a new verification link.</p>
+        </div>
+
+        @if (Model.EmailSent)
+        {
+            <div class="alert alert-success alert-modern" role="status">
+                <i class="bi bi-check-circle-fill me-2" aria-hidden="true"></i>
+                If an unverified account exists for that email, a confirmation link has been sent.
+            </div>
+        }
+
+        <form method="post" data-enhanced-form>
+            <div asp-validation-summary="All" class="alert alert-danger alert-modern validation-summary mb-3" role="alert"></div>
+            <div class="mb-3">
+                <label asp-for="Input.Email" class="form-label"></label>
+                <input asp-for="Input.Email" class="form-control" autocomplete="email" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary" data-loading-text="Sending...">Send confirmation email</button>
+            <a asp-page="/Account/Login" class="btn btn-outline-primary ms-2">Back to login</a>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

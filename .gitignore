@@ -1,0 +1,46 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+out/
+publish/
+artifacts/
+
+# Test output
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Logs
+logs/
+*.log
+
+# User-specific / IDE files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# NuGet
+packages/
+*.nupkg
+
+# Runtime app data
+App_Data/ProfilePhotos/
+App_Data/DataProtectionKeys/
+
+# Local secrets / environment-specific settings
+appsettings.Development.json
+appsettings.*.local.json
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db

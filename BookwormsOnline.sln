@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookwormsOnline", "BookwormsOnline.csproj", "{CD0F9E73-3377-F52E-0C0B-320F1ADE745A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookwormsOnline.Tests", "tests\BookwormsOnline.Tests\BookwormsOnline.Tests.csproj", "{EE292A34-9312-29B8-7E71-791D83A5D97F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD0F9E73-3377-F52E-0C0B-320F1ADE745A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD0F9E73-3377-F52E-0C0B-320F1ADE745A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD0F9E73-3377-F52E-0C0B-320F1ADE745A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD0F9E73-3377-F52E-0C0B-320F1ADE745A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE292A34-9312-29B8-7E71-791D83A5D97F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE292A34-9312-29B8-7E71-791D83A5D97F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE292A34-9312-29B8-7E71-791D83A5D97F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE292A34-9312-29B8-7E71-791D83A5D97F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EE292A34-9312-29B8-7E71-791D83A5D97F} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A9085685-ADC7-4F49-8468-C8D660838EC8}
+	EndGlobalSection
+EndGlobal

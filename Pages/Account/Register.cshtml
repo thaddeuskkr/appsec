@@ -1,0 +1,279 @@
+@page
+@model BookwormsOnline.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<section class="auth-shell auth-shell-wide">
+    <div class="auth-card">
+        <div class="auth-card__header">
+            <p class="eyebrow">Membership Registration</p>
+            <h1>Create your Bookworms account</h1>
+            <p>Complete every field to start your secure member profile.</p>
+        </div>
+
+        <form method="post"
+              enctype="multipart/form-data"
+              data-enhanced-form
+              data-recaptcha-action="register"
+              data-recaptcha-site-key="@Model.RecaptchaSiteKey">
+            <div asp-validation-summary="All" class="alert alert-danger alert-modern validation-summary mb-3" role="alert"></div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Input.FirstName" class="form-label"></label>
+                    <input asp-for="Input.FirstName" class="form-control" autocomplete="given-name" />
+                    <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.LastName" class="form-label"></label>
+                    <input asp-for="Input.LastName" class="form-control" autocomplete="family-name" />
+                    <span asp-validation-for="Input.LastName" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.CreditCardNo" class="form-label"></label>
+                    <input asp-for="Input.CreditCardNo" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="Input.CreditCardNo" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.MobileNo" class="form-label"></label>
+                    <input asp-for="Input.MobileNo" class="form-control" autocomplete="tel" />
+                    <span asp-validation-for="Input.MobileNo" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Input.BillingAddress" class="form-label"></label>
+                    <input asp-for="Input.BillingAddress" class="form-control" autocomplete="street-address" />
+                    <span asp-validation-for="Input.BillingAddress" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Input.ShippingAddress" class="form-label"></label>
+                    <input asp-for="Input.ShippingAddress" class="form-control" autocomplete="street-address" />
+                    <span asp-validation-for="Input.ShippingAddress" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.Email" class="form-label"></label>
+                    <input asp-for="Input.Email" class="form-control" autocomplete="email" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.Photo" class="form-label"></label>
+                    <input asp-for="Input.Photo" class="form-control" accept=".jpg,.jpeg,image/jpeg" />
+                    <span asp-validation-for="Input.Photo" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.Password" class="form-label"></label>
+                    <div class="input-group">
+                        <input asp-for="Input.Password" class="form-control" data-password-field autocomplete="new-password" />
+                        <button type="button" class="btn password-toggle" data-password-toggle data-target="Input_Password">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Input.ConfirmPassword" class="form-label"></label>
+                    <div class="input-group">
+                        <input asp-for="Input.ConfirmPassword" class="form-control" data-password-field autocomplete="new-password" />
+                        <button type="button" class="btn password-toggle" data-password-toggle data-target="Input_ConfirmPassword">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                </div>
+                <div class="col-12">
+                    <div class="form-check">
+                        <input asp-for="Input.EnableTwoFactor" class="form-check-input" />
+                        <label asp-for="Input.EnableTwoFactor" class="form-check-label"></label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="password-guidance" id="passwordGuidance" aria-live="polite" aria-atomic="true">
+                        <div class="password-guidance__header">
+                            <span class="password-guidance__title">Password Strength</span>
+                            <span id="passwordStrengthLabel" class="password-guidance__label">Start typing a password</span>
+                        </div>
+                        <div class="progress password-strength-progress">
+                            <div id="passwordStrengthBar"
+                                 class="progress-bar strength-weak"
+                                 role="progressbar"
+                                 aria-label="Password strength"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100"
+                                 aria-valuenow="0"
+                                 style="width: 0%"></div>
+                        </div>
+                        <ul class="password-checklist">
+                            <li class="password-checklist__item unmet" data-password-rule="min-length">
+                                <i class="bi bi-circle" aria-hidden="true"></i>
+                                <span>At least @Model.PasswordMinLength characters</span>
+                            </li>
+                            @if (Model.RequireLowercase)
+                            {
+                                <li class="password-checklist__item unmet" data-password-rule="lowercase">
+                                    <i class="bi bi-circle" aria-hidden="true"></i>
+                                    <span>At least one lowercase letter</span>
+                                </li>
+                            }
+                            @if (Model.RequireUppercase)
+                            {
+                                <li class="password-checklist__item unmet" data-password-rule="uppercase">
+                                    <i class="bi bi-circle" aria-hidden="true"></i>
+                                    <span>At least one uppercase letter</span>
+                                </li>
+                            }
+                            @if (Model.RequireDigit)
+                            {
+                                <li class="password-checklist__item unmet" data-password-rule="digit">
+                                    <i class="bi bi-circle" aria-hidden="true"></i>
+                                    <span>At least one number</span>
+                                </li>
+                            }
+                            @if (Model.RequireSpecial)
+                            {
+                                <li class="password-checklist__item unmet" data-password-rule="special">
+                                    <i class="bi bi-circle" aria-hidden="true"></i>
+                                    <span>At least one special character</span>
+                                </li>
+                            }
+                            <li class="password-checklist__item unmet" data-password-rule="confirm-match">
+                                <i class="bi bi-circle" aria-hidden="true"></i>
+                                <span>Password and confirm password must match</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <input asp-for="Input.RecaptchaToken" type="hidden" id="recaptchaToken" data-recaptcha-token="true" />
+
+            <div class="recaptcha-note">This site is protected by reCAPTCHA and the Google Privacy Policy and Terms of Service apply.</div>
+
+            <div class="mt-3 d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary" data-loading-text="Creating account...">Register</button>
+                <a asp-page="/Account/Login" class="btn btn-outline-primary">Already have an account?</a>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://www.google.com/recaptcha/api.js?render=@Model.RecaptchaSiteKey"></script>
+    <script>
+        (() => {
+            const passwordInput = document.getElementById("Input_Password");
+            const confirmInput = document.getElementById("Input_ConfirmPassword");
+            const strengthBar = document.getElementById("passwordStrengthBar");
+            const strengthLabel = document.getElementById("passwordStrengthLabel");
+            const policy = {
+                minLength: @Model.PasswordMinLength,
+                requireLowercase: @Model.RequireLowercase.ToString().ToLowerInvariant(),
+                requireUppercase: @Model.RequireUppercase.ToString().ToLowerInvariant(),
+                requireDigit: @Model.RequireDigit.ToString().ToLowerInvariant(),
+                requireSpecial: @Model.RequireSpecial.ToString().ToLowerInvariant()
+            };
+
+            if (!passwordInput || !confirmInput || !strengthBar || !strengthLabel) {
+                return;
+            }
+
+            const complexityRules = [
+                {
+                    key: "min-length",
+                    enabled: true,
+                    isMet: (password, _) => password.length >= policy.minLength
+                },
+                {
+                    key: "lowercase",
+                    enabled: policy.requireLowercase,
+                    isMet: (password, _) => /[a-z]/.test(password)
+                },
+                {
+                    key: "uppercase",
+                    enabled: policy.requireUppercase,
+                    isMet: (password, _) => /[A-Z]/.test(password)
+                },
+                {
+                    key: "digit",
+                    enabled: policy.requireDigit,
+                    isMet: (password, _) => /\d/.test(password)
+                },
+                {
+                    key: "special",
+                    enabled: policy.requireSpecial,
+                    isMet: (password, _) => /[^A-Za-z0-9]/.test(password)
+                }
+            ].filter(rule => rule.enabled);
+
+            const confirmMatchRule = {
+                key: "confirm-match",
+                isMet: (password, confirm) => password.length > 0 && confirm.length > 0 && password === confirm
+            };
+
+            const setRuleState = (ruleKey, isMet) => {
+                const item = document.querySelector(`[data-password-rule="${ruleKey}"]`);
+                if (!item) {
+                    return;
+                }
+
+                item.classList.toggle("met", isMet);
+                item.classList.toggle("unmet", !isMet);
+
+                const icon = item.querySelector("i");
+                if (!icon) {
+                    return;
+                }
+
+                icon.classList.toggle("bi-check-circle-fill", isMet);
+                icon.classList.toggle("bi-circle", !isMet);
+            };
+
+            const setStrengthTone = (tone) => {
+                strengthBar.classList.remove("strength-weak", "strength-medium", "strength-strong");
+                strengthBar.classList.add(tone);
+            };
+
+            const refreshPasswordGuidance = () => {
+                const password = passwordInput.value || "";
+                const confirmPassword = confirmInput.value || "";
+
+                let metCount = 0;
+                for (const rule of complexityRules) {
+                    const met = rule.isMet(password, confirmPassword);
+                    setRuleState(rule.key, met);
+                    if (met) {
+                        metCount++;
+                    }
+                }
+
+                const confirmMet = confirmMatchRule.isMet(password, confirmPassword);
+                setRuleState(confirmMatchRule.key, confirmMet);
+
+                const percent = complexityRules.length === 0 ? 0 : Math.round((metCount / complexityRules.length) * 100);
+                strengthBar.style.width = `${percent}%`;
+                strengthBar.setAttribute("aria-valuenow", String(percent));
+
+                if (password.length === 0) {
+                    strengthLabel.textContent = "Start typing a password";
+                    setStrengthTone("strength-weak");
+                    return;
+                }
+
+                if (percent < 50) {
+                    strengthLabel.textContent = "Weak";
+                    setStrengthTone("strength-weak");
+                } else if (percent < 100) {
+                    strengthLabel.textContent = "Almost there";
+                    setStrengthTone("strength-medium");
+                } else {
+                    strengthLabel.textContent = "Strong";
+                    setStrengthTone("strength-strong");
+                }
+            };
+
+            passwordInput.addEventListener("input", refreshPasswordGuidance);
+            confirmInput.addEventListener("input", refreshPasswordGuidance);
+            refreshPasswordGuidance();
+        })();
+    </script>
+}

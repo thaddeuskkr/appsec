@@ -1,0 +1,16 @@
+@page
+@{
+    ViewData["Title"] = "403 - Forbidden";
+}
+
+<section class="error-shell">
+    <div class="error-card">
+        <div class="error-code">403</div>
+        <h1>Access denied</h1>
+        <p>You do not have permission to view this resource with your current account session.</p>
+        <div class="error-actions">
+            <a asp-page="/Account/Login" class="btn btn-primary">Login</a>
+            <a asp-page="/Index" class="btn btn-outline-primary">Back to home</a>
+        </div>
+    </div>
+</section>
