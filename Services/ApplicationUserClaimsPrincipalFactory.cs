@@ -24,8 +24,8 @@ public class ApplicationUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<
             identity.AddClaim(new Claim(SecurityClaimTypes.SessionToken, user.CurrentSessionToken));
         }
 
-        identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
-        identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
+        identity.AddClaim(new Claim(ClaimTypes.GivenName, InputEncodingService.DecodeFromStorage(user.FirstName)));
+        identity.AddClaim(new Claim(ClaimTypes.Surname, InputEncodingService.DecodeFromStorage(user.LastName)));
 
         return identity;
     }

@@ -29,6 +29,12 @@ builder.Services.AddOptions<SmtpOptions>()
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
+builder.Services.AddOptions<AppUrlOptions>()
+    .Bind(configuration.GetSection("AppUrl"))
+    .ValidateDataAnnotations()
+    .Validate(x => Uri.TryCreate(x.PublicBaseUrl, UriKind.Absolute, out _), "AppUrl:PublicBaseUrl must be an absolute URL.")
+    .ValidateOnStart();
+
 builder.Services.AddOptions<StorageOptions>()
     .Bind(configuration.GetSection("Storage"))
     .ValidateDataAnnotations()
@@ -127,6 +133,7 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 builder.Services.AddScoped<IPasswordPolicyService, PasswordPolicyService>();
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IActiveSessionService, ActiveSessionService>();
+builder.Services.AddSingleton<IAppUrlService, AppUrlService>();
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
 
 var app = builder.Build();

@@ -60,15 +60,17 @@ public class IndexModel : PageModel
         CurrentUserId = user.Id;
         HasProfilePhoto = !string.IsNullOrWhiteSpace(user.PhotoFileName);
 
-        FullName = $"{user.FirstName} {user.LastName}".Trim();
+        var firstName = InputEncodingService.DecodeFromStorage(user.FirstName);
+        var lastName = InputEncodingService.DecodeFromStorage(user.LastName);
+        FullName = $"{firstName} {lastName}".Trim();
         Email = user.Email ?? string.Empty;
 
         try
         {
             var decryptedCard = _encryptionService.Decrypt(user.EncryptedCreditCard);
-            MobileNumber = _encryptionService.Decrypt(user.EncryptedMobileNo);
-            BillingAddress = _encryptionService.Decrypt(user.EncryptedBillingAddress);
-            ShippingAddress = _encryptionService.Decrypt(user.EncryptedShippingAddress);
+            MobileNumber = InputEncodingService.DecodeFromStorage(_encryptionService.Decrypt(user.EncryptedMobileNo));
+            BillingAddress = InputEncodingService.DecodeFromStorage(_encryptionService.Decrypt(user.EncryptedBillingAddress));
+            ShippingAddress = InputEncodingService.DecodeFromStorage(_encryptionService.Decrypt(user.EncryptedShippingAddress));
             MaskedCreditCard = MaskCard(decryptedCard);
         }
         catch

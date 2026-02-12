@@ -17,15 +17,18 @@ public class ForgotPasswordModel : PageModel
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
     private readonly IAuditLogService _auditLogService;
+    private readonly IAppUrlService _appUrlService;
 
     public ForgotPasswordModel(
         UserManager<ApplicationUser> userManager,
         IEmailSender emailSender,
-        IAuditLogService auditLogService)
+        IAuditLogService auditLogService,
+        IAppUrlService appUrlService)
     {
         _userManager = userManager;
         _emailSender = emailSender;
         _auditLogService = auditLogService;
+        _appUrlService = appUrlService;
     }
 
     [BindProperty]
@@ -51,20 +54,15 @@ public class ForgotPasswordModel : PageModel
         {
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-            var callbackUrl = Url.Page(
+            var callbackUrl = _appUrlService.BuildPageUrl(
                 "/Account/ResetPassword",
-                pageHandler: null,
-                values: new { code = encodedToken, email = user.Email },
-                protocol: Request.Scheme);
+                new { code = encodedToken, email = user.Email });
 
-            if (!string.IsNullOrWhiteSpace(callbackUrl))
-            {
-                await _emailSender.SendAsync(
-                    user.Email!,
-                    "Bookworms password reset",
-                    $"<p>Reset your password by <a href=\"{HtmlEncoder.Default.Encode(callbackUrl)}\">clicking here</a>.</p>",
-                    cancellationToken);
-            }
+            await _emailSender.SendAsync(
+                user.Email!,
+                "Bookworms password reset",
+                $"<p>Reset your password by <a href=\"{HtmlEncoder.Default.Encode(callbackUrl)}\">clicking here</a>.</p>",
+                cancellationToken);
         }
 
         await _auditLogService.LogAsync("ForgotPassword", "Requested", details: "Password reset request submitted.", cancellationToken: cancellationToken);

@@ -24,6 +24,7 @@ public class RegisterModel : PageModel
     private readonly IAuditLogService _auditLogService;
     private readonly IPasswordPolicyService _passwordPolicyService;
     private readonly IEmailSender _emailSender;
+    private readonly IAppUrlService _appUrlService;
     private readonly SecurityPolicyOptions _securityPolicy;
     private readonly RecaptchaOptions _recaptchaOptions;
 
@@ -35,6 +36,7 @@ public class RegisterModel : PageModel
         IAuditLogService auditLogService,
         IPasswordPolicyService passwordPolicyService,
         IEmailSender emailSender,
+        IAppUrlService appUrlService,
         IOptions<SecurityPolicyOptions> securityPolicy,
         IOptions<RecaptchaOptions> recaptchaOptions)
     {
@@ -45,6 +47,7 @@ public class RegisterModel : PageModel
         _auditLogService = auditLogService;
         _passwordPolicyService = passwordPolicyService;
         _emailSender = emailSender;
+        _appUrlService = appUrlService;
         _securityPolicy = securityPolicy.Value;
         _recaptchaOptions = recaptchaOptions.Value;
     }
@@ -107,13 +110,13 @@ public class RegisterModel : PageModel
             UserName = Input.Email,
             Email = Input.Email,
             EmailConfirmed = false,
-            FirstName = Input.FirstName.Trim(),
-            LastName = Input.LastName.Trim(),
-            PhoneNumber = Input.MobileNo.Trim(),
+            FirstName = InputEncodingService.EncodeForStorage(Input.FirstName),
+            LastName = InputEncodingService.EncodeForStorage(Input.LastName),
+            PhoneNumber = InputEncodingService.EncodeForStorage(Input.MobileNo),
             EncryptedCreditCard = _encryptionService.Encrypt(NormalizeCard(Input.CreditCardNo)),
-            EncryptedMobileNo = _encryptionService.Encrypt(Input.MobileNo.Trim()),
-            EncryptedBillingAddress = _encryptionService.Encrypt(Input.BillingAddress.Trim()),
-            EncryptedShippingAddress = _encryptionService.Encrypt(Input.ShippingAddress.Trim()),
+            EncryptedMobileNo = _encryptionService.Encrypt(InputEncodingService.EncodeForStorage(Input.MobileNo)),
+            EncryptedBillingAddress = _encryptionService.Encrypt(InputEncodingService.EncodeForStorage(Input.BillingAddress)),
+            EncryptedShippingAddress = _encryptionService.Encrypt(InputEncodingService.EncodeForStorage(Input.ShippingAddress)),
             PhotoFileName = photoFileName,
             TwoFactorEnabled = Input.EnableTwoFactor
         };
@@ -172,22 +175,9 @@ public class RegisterModel : PageModel
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-        var callbackUrl = Url.Page(
+        var callbackUrl = _appUrlService.BuildPageUrl(
             "/Account/ConfirmEmail",
-            pageHandler: null,
-            values: new { userId = user.Id, code = encodedToken },
-            protocol: Request.Scheme);
-
-        if (string.IsNullOrWhiteSpace(callbackUrl))
-        {
-            await _auditLogService.LogAsync(
-                "EmailConfirmation",
-                "Failed",
-                user.Id,
-                "Email confirmation callback URL generation failed.",
-                cancellationToken);
-            return false;
-        }
+            new { userId = user.Id, code = encodedToken });
 
         try
         {

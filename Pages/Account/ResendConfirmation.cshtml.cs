@@ -17,15 +17,18 @@ public class ResendConfirmationModel : PageModel
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailSender _emailSender;
     private readonly IAuditLogService _auditLogService;
+    private readonly IAppUrlService _appUrlService;
 
     public ResendConfirmationModel(
         UserManager<ApplicationUser> userManager,
         IEmailSender emailSender,
-        IAuditLogService auditLogService)
+        IAuditLogService auditLogService,
+        IAppUrlService appUrlService)
     {
         _userManager = userManager;
         _emailSender = emailSender;
         _auditLogService = auditLogService;
+        _appUrlService = appUrlService;
     }
 
     [BindProperty]
@@ -78,22 +81,9 @@ public class ResendConfirmationModel : PageModel
     {
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-        var callbackUrl = Url.Page(
+        var callbackUrl = _appUrlService.BuildPageUrl(
             "/Account/ConfirmEmail",
-            pageHandler: null,
-            values: new { userId = user.Id, code = encodedToken },
-            protocol: Request.Scheme);
-
-        if (string.IsNullOrWhiteSpace(callbackUrl))
-        {
-            await _auditLogService.LogAsync(
-                "EmailConfirmation",
-                "Failed",
-                user.Id,
-                "Email confirmation callback URL generation failed during resend.",
-                cancellationToken);
-            return false;
-        }
+            new { userId = user.Id, code = encodedToken });
 
         try
         {

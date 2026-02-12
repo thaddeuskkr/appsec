@@ -29,6 +29,7 @@ public class RegisterModelTests
             Mock.Of<IAuditLogService>(),
             Mock.Of<IPasswordPolicyService>(),
             Mock.Of<IEmailSender>(),
+            Mock.Of<IAppUrlService>(),
             Microsoft.Extensions.Options.Options.Create(policy),
             Microsoft.Extensions.Options.Options.Create(new RecaptchaOptions
             {
