@@ -5,19 +5,23 @@ namespace BookwormsOnline.Tests.Services;
 public class InputEncodingServiceTests
 {
     [Fact]
-    public void EncodeForStorage_EncodesHtmlSpecialCharacters_AndSlashes()
+    public void EncodeForStorage_EncodesAllPunctuationAndSymbols()
     {
-        const string input = "  Tom & Jerry <script>alert('x')</script> / \\\\ &nbsp;  ";
+        const string input = "  Tom & Jerry <script>alert('x')</script> / \\\\ % ! ?  ";
 
         var encoded = InputEncodingService.EncodeForStorage(input);
 
-        Assert.Contains("&amp;", encoded, StringComparison.Ordinal);
-        Assert.Contains("&lt;script&gt;", encoded, StringComparison.Ordinal);
-        Assert.DoesNotContain(" / ", encoded, StringComparison.Ordinal);
-        Assert.DoesNotContain("\\\\", encoded, StringComparison.Ordinal);
+        Assert.Contains("&#x26;", encoded, StringComparison.Ordinal); // &
+        Assert.Contains("&#x3C;", encoded, StringComparison.Ordinal); // <
+        Assert.Contains("&#x3E;", encoded, StringComparison.Ordinal); // >
+        Assert.Contains("&#x2F;", encoded, StringComparison.Ordinal); // /
+        Assert.Contains("&#x5C;", encoded, StringComparison.Ordinal); // \
+        Assert.Contains("&#x25;", encoded, StringComparison.Ordinal); // %
+        Assert.Contains("&#x21;", encoded, StringComparison.Ordinal); // !
+        Assert.Contains("&#x3F;", encoded, StringComparison.Ordinal); // ?
 
         var decoded = InputEncodingService.DecodeFromStorage(encoded);
-        Assert.Equal("Tom & Jerry <script>alert('x')</script> / \\\\ &nbsp;", decoded);
+        Assert.Equal("Tom & Jerry <script>alert('x')</script> / \\\\ % ! ?", decoded);
     }
 
     [Fact]

@@ -1,13 +1,12 @@
 using System.Net;
+using System.Globalization;
+using System.Text;
 using System.Text.Encodings.Web;
-using System.Text.Unicode;
 
 namespace BookwormsOnline.Services;
 
 public static class InputEncodingService
 {
-    private static readonly HtmlEncoder StorageHtmlEncoder = CreateStorageEncoder();
-
     public static string EncodeForStorage(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -15,7 +14,23 @@ public static class InputEncodingService
             return string.Empty;
         }
 
-        return StorageHtmlEncoder.Encode(input.Trim());
+        var trimmed = input.Trim();
+        var buffer = new StringBuilder(trimmed.Length * 2);
+
+        foreach (var rune in trimmed.EnumerateRunes())
+        {
+            if (ShouldEncodeAsEntity(rune))
+            {
+                buffer.Append("&#x");
+                buffer.Append(rune.Value.ToString("X", CultureInfo.InvariantCulture));
+                buffer.Append(';');
+                continue;
+            }
+
+            buffer.Append(HtmlEncoder.Default.Encode(rune.ToString()));
+        }
+
+        return buffer.ToString();
     }
 
     public static string DecodeFromStorage(string? storedValue)
@@ -28,11 +43,19 @@ public static class InputEncodingService
         return WebUtility.HtmlDecode(storedValue);
     }
 
-    private static HtmlEncoder CreateStorageEncoder()
+    private static bool ShouldEncodeAsEntity(Rune rune)
     {
-        var settings = new TextEncoderSettings(UnicodeRanges.BasicLatin);
-        settings.ForbidCharacter('/');
-        settings.ForbidCharacter('\\');
-        return HtmlEncoder.Create(settings);
+        return Rune.GetUnicodeCategory(rune) is
+            UnicodeCategory.ConnectorPunctuation or
+            UnicodeCategory.DashPunctuation or
+            UnicodeCategory.OpenPunctuation or
+            UnicodeCategory.ClosePunctuation or
+            UnicodeCategory.InitialQuotePunctuation or
+            UnicodeCategory.FinalQuotePunctuation or
+            UnicodeCategory.OtherPunctuation or
+            UnicodeCategory.MathSymbol or
+            UnicodeCategory.CurrencySymbol or
+            UnicodeCategory.ModifierSymbol or
+            UnicodeCategory.OtherSymbol;
     }
 }
