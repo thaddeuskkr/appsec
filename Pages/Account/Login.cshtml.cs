@@ -86,12 +86,14 @@ public class LoginModel : PageModel
             return Page();
         }
 
+        await RecoverExpiredLockoutAsync(user, cancellationToken);
+
         if (await _userManager.IsLockedOutAsync(user))
         {
             var lockoutEnd = await _userManager.GetLockoutEndDateAsync(user);
             var minutes = lockoutEnd.HasValue
                 ? Math.Max(1, (int)Math.Ceiling((lockoutEnd.Value - DateTimeOffset.UtcNow).TotalMinutes))
-                : _securityPolicyOptions.LockoutMinutes;
+                : GetAutoUnlockMinutes();
             ModelState.AddModelError(string.Empty, $"Account is locked. Try again in about {minutes} minute(s).");
             await _auditLogService.LogAsync("Login", "LockedOut", user.Id, "Account currently locked.", cancellationToken);
             return Page();
@@ -158,8 +160,14 @@ public class LoginModel : PageModel
 
         if (signInResult.IsLockedOut)
         {
-            await _auditLogService.LogAsync("Login", "LockedOut", user.Id, "User became locked after failures.", cancellationToken);
-            ModelState.AddModelError(string.Empty, "Too many failed attempts. Your account is temporarily locked.");
+            var autoUnlockAt = DateTimeOffset.UtcNow.AddMinutes(GetAutoUnlockMinutes());
+            var lockoutUpdate = await _userManager.SetLockoutEndDateAsync(user, autoUnlockAt);
+            var details = lockoutUpdate.Succeeded
+                ? $"User became locked after failures. Auto-unlock at {autoUnlockAt:O}."
+                : "User became locked after failures. Could not update auto-unlock timestamp.";
+
+            await _auditLogService.LogAsync("Login", "LockedOut", user.Id, details, cancellationToken);
+            ModelState.AddModelError(string.Empty, $"Too many failed attempts. Your account is temporarily locked for about {GetAutoUnlockMinutes()} minute(s).");
             return Page();
         }
 
@@ -192,6 +200,29 @@ public class LoginModel : PageModel
     private static string NormalizeEmail(string email)
     {
         return email.Trim();
+    }
+
+    private int GetAutoUnlockMinutes()
+    {
+        return Math.Max(1, _securityPolicyOptions.AutoUnlockMinutes);
+    }
+
+    private async Task RecoverExpiredLockoutAsync(ApplicationUser user, CancellationToken cancellationToken)
+    {
+        var lockoutEnd = await _userManager.GetLockoutEndDateAsync(user);
+        if (!lockoutEnd.HasValue || lockoutEnd.Value > DateTimeOffset.UtcNow)
+        {
+            return;
+        }
+
+        var clearLockoutResult = await _userManager.SetLockoutEndDateAsync(user, null);
+        var resetFailedCountResult = await _userManager.ResetAccessFailedCountAsync(user);
+        var outcome = clearLockoutResult.Succeeded && resetFailedCountResult.Succeeded ? "AutoRecovered" : "AutoRecoveryFailed";
+        var details = clearLockoutResult.Succeeded && resetFailedCountResult.Succeeded
+            ? "Account lockout period expired and access-failed counter was reset."
+            : "Account lockout period expired but automatic recovery could not fully reset lockout state.";
+
+        await _auditLogService.LogAsync("Login", outcome, user.Id, details, cancellationToken);
     }
 
     private string NormalizeReturnUrl(string? returnUrl)

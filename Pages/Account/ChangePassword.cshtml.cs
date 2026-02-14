@@ -40,6 +40,16 @@ public class ChangePasswordModel : PageModel
 
     public int PasswordMinAgeMinutes => _policyOptions.PasswordMinAgeMinutes;
 
+    public int PasswordMinLength => _policyOptions.PasswordMinLength;
+
+    public bool RequireUppercase => _policyOptions.RequireUppercase;
+
+    public bool RequireLowercase => _policyOptions.RequireLowercase;
+
+    public bool RequireDigit => _policyOptions.RequireDigit;
+
+    public bool RequireSpecial => _policyOptions.RequireSpecial;
+
     public async Task<IActionResult> OnGetAsync(bool expired = false)
     {
         var user = await _userManager.GetUserAsync(User);

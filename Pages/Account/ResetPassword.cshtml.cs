@@ -1,12 +1,14 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using BookwormsOnline.Models;
+using BookwormsOnline.Options;
 using BookwormsOnline.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 
 namespace BookwormsOnline.Pages.Account;
 
@@ -16,19 +18,32 @@ public class ResetPasswordModel : PageModel
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IPasswordPolicyService _passwordPolicyService;
     private readonly IAuditLogService _auditLogService;
+    private readonly SecurityPolicyOptions _policyOptions;
 
     public ResetPasswordModel(
         UserManager<ApplicationUser> userManager,
         IPasswordPolicyService passwordPolicyService,
-        IAuditLogService auditLogService)
+        IAuditLogService auditLogService,
+        IOptions<SecurityPolicyOptions> policyOptions)
     {
         _userManager = userManager;
         _passwordPolicyService = passwordPolicyService;
         _auditLogService = auditLogService;
+        _policyOptions = policyOptions.Value;
     }
 
     [BindProperty]
     public InputModel Input { get; set; } = new();
+
+    public int PasswordMinLength => _policyOptions.PasswordMinLength;
+
+    public bool RequireUppercase => _policyOptions.RequireUppercase;
+
+    public bool RequireLowercase => _policyOptions.RequireLowercase;
+
+    public bool RequireDigit => _policyOptions.RequireDigit;
+
+    public bool RequireSpecial => _policyOptions.RequireSpecial;
 
     public IActionResult OnGet(string? code = null, string? email = null)
     {

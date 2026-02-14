@@ -82,7 +82,8 @@ public class ModelStateKeyTests
         var model = new ResetPasswordModel(
             userManager.Object,
             passwordPolicy.Object,
-            Mock.Of<IAuditLogService>())
+            Mock.Of<IAuditLogService>(),
+            Microsoft.Extensions.Options.Options.Create(new SecurityPolicyOptions()))
         {
             Input = new ResetPasswordModel.InputModel
             {
